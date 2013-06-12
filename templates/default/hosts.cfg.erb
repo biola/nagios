@@ -6,7 +6,7 @@
 define host {
   use server
   address <%= node['ipaddress'] %>
-  host_name <%= node['nagios']['server']['normalize_hostname'] ? node[node['nagios']['host_name_attribute']].downcase : node[node['nagios']['host_name_attribute']] %>
+  host_name <%= node['nagios']['server']['normalize_hostname'] ? node.name.downcase : node.name %>
   hostgroups <% if node['nagios']['multi_environment_monitoring'] -%><%= node.chef_environment %>,<% end -%>all,<%= node['os'] %>,<%= node['roles'].join(",") %><% if !node['roles'].include?(node['nagios']['server_role']) %>,<%= node['nagios']['server_role'] %><% end -%>
 }
 
@@ -29,7 +29,7 @@ define host {
     ip = n['ipaddress']
   end %>
   address <%= ip %>
-  host_name <%= node['nagios']['server']['normalize_hostname'] ? n[node['nagios']['host_name_attribute']].downcase : n[node['nagios']['host_name_attribute']] %>
+  host_name <%= node['nagios']['server']['normalize_hostname'] ? n.name.downcase : n.name %>
   <% if node['nagios']['multi_environment_monitoring'] -%>
   <% if n.roles.nil? || n.roles.length == 0 -%>
   hostgroups all,<%= n.os %>, <%= n.chef_environment %>
@@ -43,6 +43,12 @@ define host {
   hostgroups all,<%= (n.roles & @hostgroups).join(",") %>,<%= n['os'] %>
   <% end -%>
   <% end -%>
+  <% if n.attribute?("nagios") and n.nagios.attribute?("notification_period") -%>
+  notification_period <%= n['nagios']['notification_period'] %>
+  <% end -%>
+  <% if n.attribute?("nagios") and n.nagios.attribute?("contact_groups") -%>
+  contact_groups <%= n['nagios']['contact_groups'] %>
+  <% end -%>
 }
 <% end -%>
 <% end -%>
@@ -52,9 +58,15 @@ define host {
 define host {
   use server
   address <%= n['address'] %>
-  host_name <%= node['nagios']['server']['normalize_hostname'] ? n['id'].downcase : n['id'] %>
+  host_name <%= node['nagios']['server']['normalize_hostname'] ? n['host_name'].downcase : n['host_name'] %>
   hostgroups all,<%= n['hostgroups'].join(",") %>
   notifications_enabled <%= n['notifications'] %>
+  <% unless n["notification_period"].nil? -%>
+  notification_period <%= n['notification_period'] %>
+  <% end -%>
+  <% unless n["contact_groups"].nil? -%>
+  contact_groups <%= n['contact_groups'] %>
+  <% end -%>
 }
 <% end -%>
 <% end -%>

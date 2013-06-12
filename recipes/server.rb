@@ -102,7 +102,11 @@ nodes = Array.new
 hostgroups = Array.new
 
 if node['nagios']['multi_environment_monitoring']
-  nodes = search(:node, "hostname:[* TO *]")
+  if node["nagios"].attribute?("environments")
+    nodes = search(:node, "hostname:[* TO *] AND (chef_environment:#{node['nagios']['environments'].join(" OR chef_environment:")})")
+  else
+    nodes = search(:node, "hostname:[* TO *]")
+  end
 else
   nodes = search(:node, "hostname:[* TO *] AND chef_environment:#{node.chef_environment}")
 end
@@ -120,7 +124,7 @@ service_hosts= Hash.new
 search(:role, "*:*") do |r|
   hostgroups << r.name
   nodes.select {|n| n['roles'].include?(r.name) }.each do |n|
-    service_hosts[r.name] = n[node['nagios']['host_name_attribute']]
+    service_hosts[r.name] = n.name
   end
 end
 
@@ -129,7 +133,7 @@ if node['nagios']['multi_environment_monitoring']
   search(:environment, "*:*") do |e|
     hostgroups << e.name
     nodes.select {|n| n.chef_environment == e.name }.each do |n|
-      service_hosts[e.name] = n[node['nagios']['host_name_attribute']]
+      service_hosts[e.name] = n.name
     end
   end
 end
@@ -150,6 +154,7 @@ unmanaged_hosts = nagios_bags.get('nagios_unmanagedhosts')
 serviceescalations = nagios_bags.get('nagios_serviceescalations')
 contacts = nagios_bags.get('nagios_contacts')
 contactgroups = nagios_bags.get('nagios_contactgroups')
+timeperiods = nagios_bags.get('nagios_timeperiods')
 
 # Add unmanaged host hostgroups to the hostgroups array if they don't already exist
 unmanaged_hosts.each do |host|
@@ -239,7 +244,9 @@ end
   end
 end
 
-nagios_conf "timeperiods"
+nagios_conf "timeperiods" do
+  variables(:timeperiods => timeperiods)
+end
 
 nagios_conf "templates" do
   variables(:templates => templates)
@@ -277,6 +284,7 @@ end
 
 nagios_conf "hosts" do
   variables(:nodes => nodes,
+            :search_nodes => hostgroup_nodes,
             :unmanaged_hosts => unmanaged_hosts,
             :hostgroups => hostgroups)
 end
@@ -292,4 +300,12 @@ nagios_nrpecheck "check_nagios" do
   command "#{node['nagios']['plugin_dir']}/check_nagios"
   parameters "-F #{node["nagios"]["cache_dir"]}/status.dat -e 4 -C /usr/sbin/#{nagios_service_name}"
   action :add
+end
+
+# Add any custom server plugins
+remote_directory node['nagios']['plugin_dir'] do
+  source "server_plugins"
+  files_owner "root"
+  files_group "root"
+  files_mode 00755
 end

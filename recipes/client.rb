@@ -67,6 +67,28 @@ template "#{node['nagios']['nrpe']['conf_dir']}/nrpe.cfg" do
   notifies :restart, "service[#{node['nagios']['nrpe']['service_name']}]"
 end
 
+# Add any custom NRPE plugins
+remote_directory node['nagios']['plugin_dir'] do
+  source "client_plugins"
+  files_owner "root"
+  files_group "root"
+  files_mode 00755
+end
+
+# Add any NRPE checks defined for node
+if node.nagios.attribute?("checks")
+  node["nagios"]["checks"].each do |check_name, check_values|
+    plugin_name = node['nagios']['checks'][check_name]['plugin_name'].nil? ? check_name : node['nagios']['checks'][check_name]['plugin_name']
+    nagios_nrpecheck "check_#{check_name}" do
+      command "#{node['nagios']['plugin_dir']}/check_#{plugin_name}"
+      warning_condition node['nagios']['checks'][check_name]['warning']
+      critical_condition node['nagios']['checks'][check_name]['critical']
+      parameters node['nagios']['checks'][check_name]['parameters']
+      action :add
+    end
+  end
+end
+
 service node['nagios']['nrpe']['service_name'] do
   action [:start, :enable]
   supports :restart => true, :reload => true, :status => true
