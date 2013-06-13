@@ -44,7 +44,7 @@ if node['platform'] == "windows" then
 
   # Download and install NSClient++
   windows_package "NSClient++ (#{arch})" do
-    source "http://chefpantry.prod.biola.edu/chef_files/nagios/NSCP-0.4.1.90-#{arch}.msi"
+    source node["nagios"]["nsclient_#{arch}_url"]
     options "/quiet /norestart" 
     action :install
   end
