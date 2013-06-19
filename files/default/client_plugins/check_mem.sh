@@ -19,13 +19,13 @@ if [ "$1" = "-w" ] && [ "$2" -gt "0" ] && [ "$3" = "-c" ] && [ "$4" -gt "0" ]; t
 
 
         if [ "$memUsedPrc" -ge "$4" ]; then
-                echo "Memory: CRITICAL Total: $memTotal_m MB - Used: $memUsed_m MB - $memUsedPrc% used!|TOTAL=$memTotal_b;;;; USED=$memUsed_b;;;; CACHE=$memCache_b;;;; BUFFER=$memBuffer_b;;;;"
+                echo "Memory: CRITICAL Total: $memTotal_m MB - Used: $memUsed_m MB - $memUsedPrc% used!|TOTAL=$memTotal_b;;;; USED=$memUsed_b;;;; FREE=$memFree_b;;;; CACHES=$memCache_b;;;;"
                 $(exit 2)
         elif [ "$memUsedPrc" -ge "$2" ]; then
-                echo "Memory: WARNING Total: $memTotal_m MB - Used: $memUsed_m MB - $memUsedPrc% used!|TOTAL=$memTotal_b;;;; USED=$memUsed_b;;;; CACHE=$memCache_b;;;; BUFFER=$memBuffer_b;;;;"
+                echo "Memory: WARNING Total: $memTotal_m MB - Used: $memUsed_m MB - $memUsedPrc% used!|TOTAL=$memTotal_b;;;; USED=$memUsed_b;;;; FREE=$memFree_b;;;; CACHES=$memCache_b;;;;"
                 $(exit 1)
         else
-                echo "Memory: OK Total: $memTotal_m MB - Used: $memUsed_m MB - $memUsedPrc% used|TOTAL=$memTotal_b;;;; USED=$memUsed_b;;;; CACHE=$memCache_b;;;; BUFFER=$memBuffer_b;;;;"
+                echo "Memory: OK Total: $memTotal_m MB - Used: $memUsed_m MB - $memUsedPrc% used|TOTAL=$memTotal_b;;;; USED=$memUsed_b;;;; FREE=$memFree_b;;;; CACHES=$memCache_b;;;;"
                 $(exit 0)
         fi
 

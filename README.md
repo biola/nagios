@@ -20,17 +20,17 @@ client.rb
 * Recipe updated to add custom NRPE checks defined in node attributes
 
 client_windows.rb
----------
+-----------------
 
 * New recipe for installing and configuring NSClient++ on Windows
 
 knife.rb
----------
+--------
 
 * New recipe that gives Nagios the ability to interact with Chef; deploys a knife configuration file and sets the nagios user as the owner of the node's Chef client key
 
 server_extras.rb
----------
+----------------
 
 * New recipe for installing Exfoliation theme and host platform logos
 
@@ -49,20 +49,20 @@ hosts.cfg.erb
 
 * host_name_attribute is ignored; all Nagios hosts are named using the node name
 * Unmanaged hosts are named using the "host_name" attribute instead of the ID, since Chef does not allow dots in the ID
-* A notification period can be specified per host
+* A notification period and contact groups can be specified per host, including unmanaged hosts
 
 hostextinfo.cfg.erb
--------------
+-------------------
 
 * New template for extended host information, used by the server_extras.rb recipe
 
 livestatus.erb
--------------
+--------------
 
 * New template for livestatus xinet daemon configuration
 
 nagios.cfg.erb
-----------------
+--------------
 
 * Template updated with options needed for Splunk app
 * Removed timezone option set to UTC; will use system timezone instead
@@ -78,13 +78,13 @@ services.cfg.erb
 * Removed checks for existing hostgroups to allow a comma separated list of hostgroups
 
 templates.cfg.erb
-----------------
+-----------------
 
 * Template updated to enable performance data collection for default hosts and services
 * Removed 24x7 timeperiod for service template; the timeperiod will now be pulled from the host definition, which can be dynamically assigned
 
 timeperiods.cfg.erb
-----------------
+-------------------
 
 * Template updated to allow custom timeperiods defined in databags
 
