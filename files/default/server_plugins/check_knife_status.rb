@@ -5,8 +5,22 @@ time_format = "%F %R"
 # Default timeframe of 1 day
 timeframe = Time.now.to_i - 86400
 
-# Collect the last checkin time for all of the nodes in Chef
-nodes.all do |n|
+# Get the environments the Nagios server is monitoring
+environments = Array.new
+search(:node, "roles:nagios_host") do |n|
+	if n['nagios']['multi_environment_monitoring']
+	  if n["nagios"].attribute?("environments")
+	    environments.push(n["nagios"]["environments"])
+	  else
+	    environments.push("*")
+	  end
+	else
+	  environments.push(n["chef_environment"])
+	end
+end
+
+# Collect the last checkin time for all of the nodes in Chef in the given environment(s)
+search(:node, "chef_environment:#{environments.join(" OR chef_environment:")}") do |n|
 	last_checkin = Time.at(n['ohai_time']).to_i
 	if (last_checkin < timeframe)
 		outdated_clients.push("#{n.name}: #{Time.at(last_checkin).strftime(time_format)}")
