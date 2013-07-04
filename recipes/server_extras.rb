@@ -54,13 +54,17 @@ end
 # Sort by name to provide stable ordering
 nodes.sort! {|a,b| a.name <=> b.name }
 
+nagios_bags = NagiosDataBags.new
+unmanaged_hosts = nagios_bags.get('nagios_unmanagedhosts')
+
 template "#{node['nagios']['config_dir']}/hostextinfo.cfg" do
   source "hostextinfo.cfg.erb"
   owner "nagios"
   group "nagios"
   mode 0644
   variables(
-    :hosts => nodes
+    :hosts => nodes,
+    :unmanaged_hosts => unmanaged_hosts
   )
   notifies :reload, resources(:service => "nagios")
 end
