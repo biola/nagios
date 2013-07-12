@@ -400,9 +400,9 @@ for (my $i=0;$i<3;$i++) {
 }
 print " OK" if ($exit_val eq $ERRORS{"OK"});
 if (defined($o_perf)) { 
-   print " | load_1_min=$load[0];$o_warnL[0];$o_critL[0] ";
-   print "load_5_min=$load[1];$o_warnL[1];$o_critL[1] ";
-   print "load_15_min=$load[2];$o_warnL[2];$o_critL[2]\n";
+   print " | load1=$load[0];$o_warnL[0];$o_critL[0];0; ";
+   print "load5=$load[1];$o_warnL[1];$o_critL[1];0; ";
+   print "load15=$load[2];$o_warnL[2];$o_critL[2];0;\n";
 } else {
  print "\n";
 }
