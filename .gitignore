@@ -1,4 +1,2 @@
-.bundle
-.cache
-.kitchen
-bin
+.DS_Store
+.gitignore

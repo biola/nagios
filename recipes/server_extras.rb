@@ -51,8 +51,13 @@ else
   nodes = search(:node, "hostname:[* TO *] AND chef_environment:#{node.chef_environment}")
 end
 
+# Include unmanaged hosts
+nagios_bags = NagiosDataBags.new
+unmanaged_hosts = nagios_bags.get('nagios_unmanagedhosts')
+
 # Sort by name to provide stable ordering
 nodes.sort! {|a,b| a.name <=> b.name }
+unmanaged_hosts.sort! {|a,b| a["host_name"] <=> b["host_name"] }
 
 template "#{node['nagios']['config_dir']}/hostextinfo.cfg" do
   source "hostextinfo.cfg.erb"
@@ -60,7 +65,8 @@ template "#{node['nagios']['config_dir']}/hostextinfo.cfg" do
   group "nagios"
   mode 0644
   variables(
-    :hosts => nodes
+    :hosts => nodes,
+    :unmanaged_hosts => unmanaged_hosts
   )
   notifies :reload, resources(:service => "nagios")
 end

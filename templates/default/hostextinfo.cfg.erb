@@ -9,3 +9,14 @@ define hostextinfo {
 }
 
 <% end -%>
+
+<% @unmanaged_hosts.each do |unmanaged_host| -%>
+<% if unmanaged_host['platform'] -%>
+define hostextinfo {
+  host_name <%= node['nagios']['server']['normalize_hostname'] ? unmanaged_host['host_name'].downcase : unmanaged_host['host_name'] %>
+  icon_image <%= unmanaged_host['platform'] %>.png
+  statusmap_image <%= unmanaged_host['platform'] %>.gd2
+}
+
+<% end -%>
+<% end -%>

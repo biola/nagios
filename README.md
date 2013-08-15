@@ -39,6 +39,11 @@ splunk.rb
 
 * New recipe for configuring Splunk forwarder and installing MK Livestatus
 
+vmware.rb
+---------
+
+* New recipe for installing vSphere Perl SDK and dependencies for op5's vSphere plugin
+
 commands.cfg.erb
 ----------------
 
