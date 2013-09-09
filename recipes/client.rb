@@ -80,9 +80,8 @@ if node.nagios.attribute?("checks")
   node["nagios"]["checks"].each do |check_name, check_values|
     plugin_name = check_values['plugin_name'].nil? ? check_name : check_values['plugin_name']
     plugin_dir = check_values['plugin_dir'].nil? ? node['nagios']['plugin_dir'] : check_values['plugin_dir']
-    nrpe_command = check_values['remove_prefix'] ? "#{plugin_dir}/#{plugin_name}" : "#{plugin_dir}/check_#{plugin_name}"
-    nagios_nrpecheck "check_#{check_name}" do
-      command nrpe_command
+    nagios_nrpecheck check_name do
+      command "#{plugin_dir}/#{plugin_name}"
       warning_condition check_values['warning']
       critical_condition check_values['critical']
       parameters check_values['parameters']

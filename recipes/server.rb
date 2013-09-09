@@ -156,6 +156,9 @@ contacts = nagios_bags.get('nagios_contacts')
 contactgroups = nagios_bags.get('nagios_contactgroups')
 timeperiods = nagios_bags.get('nagios_timeperiods')
 
+# Sort by name to provide stable ordering
+unmanaged_hosts.sort! {|a,b| a["host_name"] <=> b["host_name"] }
+
 # Add unmanaged host hostgroups to the hostgroups array if they don't already exist
 unmanaged_hosts.each do |host|
   host['hostgroups'].each do |hg|
