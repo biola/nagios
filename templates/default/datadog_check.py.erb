@@ -1,0 +1,17 @@
+# This file is managed by Chef. Any local changes will be overwritten.
+import re
+import time
+from checks import AgentCheck
+
+class NagiosCheck(AgentCheck):
+	def check(self, instance):
+		# Return the number of seconds since the last Nagios command check
+		status_file = open(instance['status_file'], "r")
+		last_command_check = ""
+		for line in status_file:
+			if "last_command_check" in line:
+				last_command_check = line
+		if last_command_check:
+			last_command_check = re.sub(r'^.*=(\d*)$', r'\1', last_command_check)
+			seconds = time.time() - int(last_command_check)
+			self.gauge('nagios.last_command_check', seconds)
