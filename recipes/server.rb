@@ -148,16 +148,16 @@ nodes.each do |n|
 end
 
 nagios_bags = NagiosDataBags.new
-services = nagios_bags.get('nagios_services')
-servicegroups = nagios_bags.get('nagios_servicegroups')
-templates = nagios_bags.get('nagios_templates')
-eventhandlers = nagios_bags.get('nagios_eventhandlers')
-unmanaged_hosts = nagios_bags.get('nagios_unmanagedhosts')
-serviceescalations = nagios_bags.get('nagios_serviceescalations')
-contacts = nagios_bags.get('nagios_contacts')
-contactgroups = nagios_bags.get('nagios_contactgroups')
-servicedependencies = nagios_bags.get('nagios_servicedependencies')
-timeperiods = nagios_bags.get('nagios_timeperiods')
+services = nagios_bags.get(node['nagios']['services_databag'])
+servicegroups = nagios_bags.get(node['nagios']['servicegroups_databag'])
+templates = nagios_bags.get(node['nagios']['templates_databag'])
+eventhandlers = nagios_bags.get(node['nagios']['eventhandlers_databag'])
+unmanaged_hosts = nagios_bags.get(node['nagios']['unmanagedhosts_databag'])
+serviceescalations = nagios_bags.get(node['nagios']['serviceescalations_databag'])
+contacts = nagios_bags.get(node['nagios']['contacts_databag'])
+contactgroups = nagios_bags.get(node['nagios']['contactgroups_databag'])
+servicedependencies = nagios_bags.get(node['nagios']['servicedependencies_databag'])
+timeperiods = nagios_bags.get(node['nagios']['timeperiods_databag'])
 
 # Sort by name to provide stable ordering
 unmanaged_hosts.sort! {|a,b| a["host_name"] <=> b["host_name"] }
@@ -172,8 +172,8 @@ end
 # Load search defined Nagios hostgroups from the nagios_hostgroups data bag and find nodes
 hostgroup_nodes = {}
 hostgroup_list = []
-if nagios_bags.bag_list.include?('nagios_hostgroups')
-  search(:nagios_hostgroups, '*:*') do |hg|
+if nagios_bags.bag_list.include?(node['nagios']['hostgroups_databag'])
+  search(node['nagios']['hostgroups_databag'].to_sym, '*:*') do |hg|
     hostgroup_list << hg['hostgroup_name']
     temp_hostgroup_array = Array.new
     if node['nagios']['multi_environment_monitoring']
