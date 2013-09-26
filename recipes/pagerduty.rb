@@ -50,6 +50,7 @@ remote_file "#{node['nagios']['plugin_dir']}/pagerduty_nagios.pl" do
 end
 
 nagios_conf 'pagerduty'
+nagios_conf 'pagerduty-critical' unless node['nagios']['pagerduty_critical_key'].empty?
 
 cron 'Flush Pagerduty' do
   user node['nagios']['user']

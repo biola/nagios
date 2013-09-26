@@ -26,6 +26,15 @@ define contactgroup {
   members           <%= @members.join(',') %>
 }
 
+<% unless node['nagios']['pagerduty_critical_key'].empty? -%>
+define contactgroup {
+  contactgroup_name critical-admins
+  alias             Nagios Critical Admins
+  members           <%= @admins.map(&:id).join(',') %>,pagerduty-critical
+}
+
+<% end -%>
+
 <% @admins.each do |a| -%>
 define contact {
   use          default-contact
