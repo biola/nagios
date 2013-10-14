@@ -42,7 +42,7 @@ if node['platform_family'] == 'debian'
   splunk_host = ['127.0.0.1']
 
   # Find all splunk servers in Chef
-  search(:node, 'recipes:splunk\:\:server') do |n|
+  search(:node, "roles:#{node['splunk']['server_role']}") do |n|
     splunk_host << n['ipaddress']
   end
 
