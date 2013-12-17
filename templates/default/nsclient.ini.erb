@@ -19,3 +19,10 @@ port = 5666
 <% @aliases.each do |a,a_value| -%>
 alias_<%= a %> = <%= a_value['command'] %>
 <% end -%>
+
+<% if @scripts -%>
+[/settings/external scripts/scripts]
+<% @scripts.each do |s,s_value| -%>
+<%= s %> = <%= s_value['command'] %>
+<% end -%>
+<% end -%>

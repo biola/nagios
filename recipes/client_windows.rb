@@ -54,12 +54,18 @@ if node['platform'] == "windows" then
     supports :restart => true
   end
 
+  # Add any custom external scripts
+  remote_directory "C:/Program Files/NSClient++/scripts" do
+    source "nsclient_scripts"
+  end
+
   # Create configuration file
   template "C:/Program Files/NSClient++/nsclient.ini" do
     source "nsclient.ini.erb"
     variables(
       :mon_host => mon_host,
-      :aliases => node["nagios"]["aliases"]
+      :aliases => node["nagios"]["aliases"],
+      :scripts => node["nagios"]["scripts"]
     )
     notifies :restart, resources(:service => "nscp")
   end
