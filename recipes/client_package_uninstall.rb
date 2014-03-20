@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: nagios
-# Recipe:: client_windows_uninstall
+# Recipe:: client_package_uninstall
 #
 # Copyright 2013, Biola University 
 #
@@ -17,21 +17,14 @@
 # limitations under the License.
 #
 
-if node['platform'] == "windows" then
-  if ::Win32::Service.exists?("nscp")
-    arch = node['kernel']['machine'] == "x86_64" ? "x64" : "Win32"
+# Stop and disable the nrpe service
+service node['nagios']['nrpe']['service_name'] do
+  action [:stop, :disable]
+end
 
-    # Stop the nscp service before uninstallation
-    service "nscp" do
-      action [ :stop, :disable ]
-    end
-
-    # Uninstall NSClient++ using Powershell (since the UninstallString in the registry is not valid for this package)
-    powershell_script "uninstall nsclient" do
-      code <<-EOH
-      $app = Get-WmiObject -Class Win32_Product -Filter "Name = 'NSClient++ (#{arch})'"
-      $app.Uninstall()
-      EOH
-    end
+# Uninstall the nrpe packages specified in the ['nrpe']['packages'] attribute
+node['nagios']['nrpe']['packages'].each do |pkg|
+  package pkg do
+  	action :remove
   end
 end
